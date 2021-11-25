@@ -49,7 +49,7 @@ public class WordCountDemo {
     public static void main(String[] args) throws Exception {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-wordcount");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "<Hostname>");
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
@@ -61,7 +61,7 @@ public class WordCountDemo {
 
         StreamsBuilder builder = new StreamsBuilder();
 
-        KStream<String, String> source = builder.stream("streams-plaintext-input");
+        KStream<String, String> source = builder.stream("<input_file>");
 
         KTable<String, Long> counts = source
             .flatMapValues(new ValueMapper<String, Iterable<String>>() {
@@ -79,7 +79,7 @@ public class WordCountDemo {
             .count();
 
         // need to override value serde to Long type
-        counts.toStream().to("streams-wordcount-output", Produced.with(Serdes.String(), Serdes.Long()));
+        counts.toStream().to("<output_file>", Produced.with(Serdes.String(), Serdes.Long()));
 
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
         final CountDownLatch latch = new CountDownLatch(1);
